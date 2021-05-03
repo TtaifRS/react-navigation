@@ -5,6 +5,10 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import MainTabScreen from './screens/MainTabScreen';
+import DrawerScreen from './screens/DrawerScreen';
+import SupportScreen from './screens/SupportScreen';
+import SettingScreen from './screens/SettingScreen';
+import BookMarksScreen from './screens/BookMarksScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -12,9 +16,14 @@ const App = () => {
   return (
     <NavigationContainer>
       {/* drawer navigation */}
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={MainTabScreen} />
-        {/* <Drawer.Screen name="Details" component={DetailStackScreen} /> */}
+      <Drawer.Navigator
+        initialRouteName="Home"
+        drawerContent={(props) => <DrawerScreen {...props} />}
+      >
+        <Drawer.Screen name="MainTab" component={MainTabScreen} />
+        <Drawer.Screen name="Support" component={SupportScreen} />
+        <Drawer.Screen name="Settings" component={SettingScreen} />
+        <Drawer.Screen name="Bookmarks" component={BookMarksScreen} />
       </Drawer.Navigator>
       {/* stack navigation */}
       {/* <Stack.Navigator

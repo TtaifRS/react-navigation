@@ -43,7 +43,7 @@ const MainTabScreen = () => (
       name="Explore"
       component={ExploreScreen}
       options={{
-        tabBarLabel: 'Profile',
+        tabBarLabel: 'Explore',
         tabBarColor: 'tomato',
         tabBarIcon: ({ color }) => (
           <MaterialIcons name="explore" color={color} size={26} />
