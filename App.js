@@ -4,6 +4,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import RootStackScreen from './screens/RootStackScreen/RootStackScreen';
 import MainTabScreen from './screens/MainTabScreen';
 import DrawerScreen from './screens/DrawerScreen';
 import SupportScreen from './screens/SupportScreen';
@@ -15,8 +16,9 @@ const Drawer = createDrawerNavigator();
 const App = () => {
   return (
     <NavigationContainer>
+      <RootStackScreen />
       {/* drawer navigation */}
-      <Drawer.Navigator
+      {/* <Drawer.Navigator
         initialRouteName="Home"
         drawerContent={(props) => <DrawerScreen {...props} />}
       >
@@ -24,7 +26,7 @@ const App = () => {
         <Drawer.Screen name="Support" component={SupportScreen} />
         <Drawer.Screen name="Settings" component={SettingScreen} />
         <Drawer.Screen name="Bookmarks" component={BookMarksScreen} />
-      </Drawer.Navigator>
+      </Drawer.Navigator> */}
       {/* stack navigation */}
       {/* <Stack.Navigator
         screenOptions={{
