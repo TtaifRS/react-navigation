@@ -5,7 +5,7 @@ import {
   MaterialIcons,
 } from '@expo/vector-icons';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import {
@@ -19,9 +19,12 @@ import {
   Switch,
 } from 'react-native-paper';
 
+import { AuthContext } from '../context/context';
+
 const DrawerScreen = (props) => {
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const toggleTheme = () => setIsDarkTheme(!isDarkTheme);
+  const { signOut } = useContext(AuthContext);
 
   return (
     <View style={{ flex: 1 }}>
@@ -133,7 +136,9 @@ const DrawerScreen = (props) => {
             />
           )}
           label="sign out"
-          onPress={() => {}}
+          onPress={() => {
+            signOut();
+          }}
         />
       </Drawer.Section>
     </View>

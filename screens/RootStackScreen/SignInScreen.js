@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
-import { set } from 'react-native-reanimated';
+import { AuthContext } from '../../context/context';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const SignInScreen = ({ navigation }) => {
@@ -20,6 +20,8 @@ const SignInScreen = ({ navigation }) => {
     check_textInputChange: false,
     secureTextEntry: true,
   });
+
+  const { signIn } = useContext(AuthContext);
 
   const textInputChange = (val) => {
     if (val.length !== 0) {
@@ -92,9 +94,19 @@ const SignInScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.button}>
-          <LinearGradient colors={['#02386E', '#0052a2']} style={styles.signIn}>
-            <Text style={styles.textSignIn}>Sign In</Text>
-          </LinearGradient>
+          <TouchableOpacity
+            style={styles.signIn}
+            onPress={() => {
+              signIn();
+            }}
+          >
+            <LinearGradient
+              colors={['#02386E', '#0052a2']}
+              style={styles.signIn}
+            >
+              <Text style={styles.textSignIn}>Sign In</Text>
+            </LinearGradient>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('SignUp')}
             style={[
@@ -162,7 +174,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   signIn: {
-    width: '80%',
+    width: '100%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
