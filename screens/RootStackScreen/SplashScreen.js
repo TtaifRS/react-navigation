@@ -11,22 +11,25 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
+import * as Animatable from 'react-native-animatable';
 
 const SplashScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image
+        <Animatable.Image
+          animation="bounceIn"
+          duration={1500}
           source={require('../../assets/res-logo.png')}
           style={styles.logo}
           resizeMode="stretch"
         />
       </View>
-      <View style={styles.footer}>
+      <Animatable.View style={styles.footer} animation="fadeInUpBig">
         <Text style={styles.title}>Stay connected with everyone</Text>
         <Text style={styles.text}>Sign in with account</Text>
         <View style={styles.button}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
             <LinearGradient
               colors={['#02386E', '#0052a2']}
               style={styles.signIn}
@@ -36,7 +39,7 @@ const SplashScreen = ({ navigation }) => {
             </LinearGradient>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animatable.View>
     </View>
   );
 };
