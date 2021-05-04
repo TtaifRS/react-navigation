@@ -12,35 +12,102 @@ import SettingScreen from './screens/SettingScreen';
 import BookMarksScreen from './screens/BookMarksScreen';
 import { ActivityIndicator, View } from 'react-native';
 import { AuthContext } from './context/context';
+import { useReducer } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Drawer = createDrawerNavigator();
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [userToken, setUserToken] = useState(null);
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [userToken, setUserToken] = useState(null);
+  const initialLoginState = {
+    isLoading: true,
+    userName: null,
+    userToken: null,
+  };
 
-  const authContext = useMemo(() => ({
-    signIn: () => {
-      setUserToken('ahaf');
-      setIsLoading(false);
-    },
-    signOut: () => {
-      setUserToken(null);
-      setIsLoading(false);
-    },
-    signUp: () => {
-      setUserToken('ahaf');
-      setIsLoading(false);
-    },
-  }));
+  loginReducer = (prevState, action) => {
+    switch (action.type) {
+      case 'RETRIEVE_TOKEN':
+        return {
+          ...prevState,
+          userToken: action.token,
+          isLoading: false,
+        };
+      case 'LOGIN':
+        return {
+          ...prevState,
+          isLoading: false,
+          userName: action.id,
+          userToken: action.token,
+        };
+      case 'LOGOUT':
+        return {
+          ...prevState,
+          isLoading: false,
+          userName: null,
+          userToken: null,
+        };
+      case 'REGISTER':
+        return {
+          ...prevState,
+          isLoading: false,
+          userName: action.id,
+          userToken: action.token,
+        };
+    }
+  };
+
+  const [loginState, dispatch] = useReducer(loginReducer, initialLoginState);
+
+  const authContext = useMemo(
+    () => ({
+      signIn: async (userName, password) => {
+        // setUserToken('ahaf');
+        // setIsLoading(false);
+
+        let userToken;
+        userToken = null;
+        if (userName == 'user' && password == 'pass') {
+          try {
+            userToken = 'dfgdfg';
+            await AsyncStorage.setItem('userToken', userToken);
+          } catch (e) {
+            console.log(e);
+          }
+        }
+        dispatch({ type: 'LOGIN', id: userName, token: userToken });
+      },
+      signOut: async () => {
+        // setUserToken(null);
+        // setIsLoading(false);
+        try {
+          await AsyncStorage.removeItem('userToken', userToken);
+        } catch (e) {
+          console.log(e);
+        }
+        dispatch({ type: 'LOGOUT' });
+      },
+      signUp: () => {},
+    }),
+    []
+  );
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
+    setTimeout(async () => {
+      let userToken;
+      userToken = null;
+      try {
+        userToken = await AsyncStorage.getItem('userToken');
+      } catch (e) {
+        console.log(e);
+      }
+      console.log('user token', userToken);
+      dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
     }, 1000);
   }, []);
 
-  if (isLoading) {
+  if (loginState.isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="grey" />
@@ -51,7 +118,7 @@ const App = () => {
   return (
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
-        {userToken !== null ? (
+        {loginState.userToken !== null ? (
           <Drawer.Navigator
             initialRouteName="Home"
             drawerContent={(props) => <DrawerScreen {...props} />}
