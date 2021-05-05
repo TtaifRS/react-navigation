@@ -7,11 +7,13 @@ import {
   Platform,
   TouchableOpacity,
   StatusBar,
+  Alert,
 } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import { AuthContext } from '../../context/context';
 import { LinearGradient } from 'expo-linear-gradient';
+import Users from '../../models/users';
 
 const SignInScreen = ({ navigation }) => {
   const [data, setData] = useState({
@@ -19,31 +21,44 @@ const SignInScreen = ({ navigation }) => {
     password: '',
     check_textInputChange: false,
     secureTextEntry: true,
+    isValidUser: true,
+    isValidPassword: true,
   });
 
   const { signIn } = useContext(AuthContext);
 
   const textInputChange = (val) => {
-    if (val.length !== 0) {
+    if (val.trim().length >= 4) {
       setData({
         ...data,
         username: val,
         check_textInputChange: true,
+        isValidUser: true,
       });
     } else {
       setData({
         ...data,
         username: val,
         check_textInputChange: false,
+        isValidUser: false,
       });
     }
   };
 
   const handlePasswordChange = (val) => {
-    setData({
-      ...data,
-      password: val,
-    });
+    if (val.trim().length >= 4) {
+      setData({
+        ...data,
+        password: val,
+        isValidPassword: true,
+      });
+    } else {
+      setData({
+        ...data,
+        password: val,
+        isValidPassword: false,
+      });
+    }
   };
 
   const updateSecureTextEntry = () => {
@@ -54,7 +69,36 @@ const SignInScreen = ({ navigation }) => {
   };
 
   const loginHandle = (username, password) => {
-    signIn(username, password);
+    const foundUser = Users.filter((item) => {
+      return username == item.username && password == item.password;
+    });
+    if (data.username.length === 0 || data.password.length === 0) {
+      Alert.alert('Wrong Input', 'username or password cannot be empty', [
+        { text: 'Okay' },
+      ]);
+      return;
+    }
+    if (foundUser.length === 0) {
+      Alert.alert('Invalid User', 'username or password is incorrect', [
+        { text: 'Okay' },
+      ]);
+      return;
+    }
+    signIn(foundUser);
+  };
+
+  const handleValidUser = (value) => {
+    if (value.trim().length >= 4) {
+      setData({
+        ...data,
+        isValidUser: true,
+      });
+    } else {
+      setData({
+        ...data,
+        isValidUser: false,
+      });
+    }
   };
 
   return (
@@ -68,10 +112,11 @@ const SignInScreen = ({ navigation }) => {
         <View style={styles.action}>
           <FontAwesome name="user-o" color="#05375a" size={20} />
           <TextInput
-            placeholder="Email"
             style={styles.textInput}
+            placeholder="Email"
             autoCapitalize="none"
             onChangeText={(val) => textInputChange(val)}
+            onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
           />
           {data.check_textInputChange ? (
             <Animatable.View animation="bounceIn">
@@ -79,6 +124,13 @@ const SignInScreen = ({ navigation }) => {
             </Animatable.View>
           ) : null}
         </View>
+        {data.isValidUser ? null : (
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.errorMessage}>
+              Username must be 4 characters long.
+            </Text>
+          </Animatable.View>
+        )}
         <Text style={[styles.textFooter, { marginTop: 25 }]}>Password</Text>
         <View style={styles.action}>
           <Feather name="lock" color="#05375a" size={20} />
@@ -97,6 +149,14 @@ const SignInScreen = ({ navigation }) => {
             )}
           </TouchableOpacity>
         </View>
+        {data.isValidPassword ? null : (
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.errorMessage}>
+              Password must be 4 characters long.
+            </Text>
+          </Animatable.View>
+        )}
+
         <TouchableOpacity>
           <Text style={{ color: '#02386e', marginTop: 15 }}>
             Forgot password?
@@ -193,6 +253,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#fff',
     fontWeight: 'bold',
+  },
+  errorMessage: {
+    color: '#ff0000',
+    fontSize: 14,
   },
 });
 

@@ -62,13 +62,13 @@ const App = () => {
 
   const authContext = useMemo(
     () => ({
-      signIn: async (userName, password) => {
+      signIn: async (foundUser) => {
         // setUserToken('ahaf');
         // setIsLoading(false);
 
-        let userToken;
-        userToken = null;
-        if (userName == 'user' && password == 'pass') {
+        const userName = foundUser[0].username;
+        const userToken = String(foundUser[0].userToken);
+        {
           try {
             userToken = 'dfgdfg';
             await AsyncStorage.setItem('userToken', userToken);
@@ -81,6 +81,7 @@ const App = () => {
       signOut: async () => {
         // setUserToken(null);
         // setIsLoading(false);
+        let userToken;
         try {
           await AsyncStorage.removeItem('userToken', userToken);
         } catch (e) {
